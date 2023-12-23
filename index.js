@@ -23,6 +23,7 @@ const serverStart = async () => {
 }
 
 
+
 app.use(express.json());
 app.use(cors());
 
@@ -30,6 +31,8 @@ app.use('/api', postRouter);
 app.use('/api', userRouter);
 app.use('/api', authRouter);
 
-
+app.get('/', (req, res) => {
+  res.send('<h1>Server is working!</h1>')
+})
 
 serverStart();
