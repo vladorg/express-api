@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import User from './models/User.js';
+
+
 
 export const regValidator = (login, password) => {
   try {
@@ -29,46 +29,5 @@ export const regValidator = (login, password) => {
     console.log(err);
 
     return err
-  }
-}
-
-export const checkUser = async (req) => {
-  try {
-    const { authorization } = req.headers;
-    const token = authorization?.split(' ')[1];
-    const ver = jwt.verify(token, process.env.SECRET_KEY);
-
-    const { userId } = ver;
-
-    const user = await User.findById(userId);
-
-    return user
-
-  } catch(err) {
-    return false
-  }
-}
-
-export const checkAdmin = async (req) => {
-  try {
-    const { authorization } = req.headers;
-    const token = authorization?.split(' ')[1];
-    const ver = jwt.verify(token, process.env.SECRET_KEY);
-
-    const { userId } = ver;
-
-    const user = await User.findById(userId);
-    if (user) {
-      const { level } = user;
-
-      if (level === 1) {
-        return true
-      }
-    }
-
-    return false
-
-  } catch(err) {
-    return false
   }
 }

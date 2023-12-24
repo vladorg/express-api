@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const checkAuthMiddleware = (req, res, next) => {
+export const checkAuthMiddleware = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = authorization?.split(' ')[1];
@@ -21,8 +21,6 @@ const checkAuthMiddleware = (req, res, next) => {
 
     next();
   } catch(err) {
-    res.status(401).json({ message: 'post: failed token check' } );
+    res.status(500).json({ message: 'post: failed auth check' } );
   }
 }
-
-export default checkAuthMiddleware;

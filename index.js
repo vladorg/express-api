@@ -5,6 +5,7 @@ import cors from 'cors';
 import postRouter from './routers/postRouter.js';
 import userRouter from './routers/userRouter.js';
 import authRouter from './routers/authRouter.js';
+import fileUpload from 'express-fileupload';
 
 dotenv.config();
 
@@ -22,10 +23,10 @@ const serverStart = async () => {
   }
 }
 
-
-
 app.use(express.json());
 app.use(cors());
+app.use(fileUpload());
+app.use(express.static('static'));
 
 app.use('/api', postRouter);
 app.use('/api', userRouter);

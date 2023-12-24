@@ -1,39 +1,74 @@
 import User from '../models/User.js'
+import Post from '../models/Post.js'
+import userPhotoService from '../services/userPhotoService.js';
 
-export const getUserInfo = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findById(id, ['-password']);
-    
-    if (!user) {
-      res.status(404).json({ message: "not found" });
-      return
+class userControler {
+
+  async getAll(req, res) {
+    try {
+      let posts;
+      const { authorId } = req.query;
+  
+      if (authorId) {
+        posts = await Post.find({ "author.id": authorId});
+      } else {
+        posts = await Post.find();
+      }
+  
+      res.json({
+        message: 'ok',
+        posts
+      });
+    } catch(err) {
+      res.status(500).send({ message: err.message });
     }
-
-    res.status(200).json({ message: "ok", user });
-
-  } catch(err) {
-    return res.status(500).send({ message: err.message });
   }
-}
 
+  async getOne(req, res) {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id, ['-password']);
+      
+      if (!user) {
+        res.status(404).json({ message: "not found" });
+        return
+      }
+  
+      res.status(200).json({ message: "ok", user });
+  
+    } catch(err) {
+      return res.status(500).send({ message: err.message });
+    }
+  }
 
-export const updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
+  async updateUser(req, res) {
+    try {
+      const { id } = req.params;
+      const photoPath = 'http://' + req.headers.host + '/images/users/';  
+      let photoName = 'user.jpg';
+      let userPhotoPath = photoPath + photoName;    
+      
+      if (req.files?.photo?.size) {
+        photoName = userPhotoService.generateName(req.files?.photo);
+        userPhotoPath = photoPath + photoName;
+        req.body.photo = userPhotoPath;
+      } 
+  
+      const updatedUser = await User.findByIdAndUpdate(id, req.body, {new: true});
 
-    if (req.body.name || req.body.role) {    
-      const updatedUser = await User.findByIdAndUpdate(id, req.body, {new: true})
-
+      if (req.files?.photo?.size) {
+        userPhotoService.saveOnDisc(req.files?.photo, photoName);
+      }
+  
       res.json({
         message: 'ok',
         updatedUser
       })
-    } else {
-      res.status(400).send({ message: 'Failed update: no data' })
+  
+    } catch(err) {
+      res.status(500).send({ message: err.message });
     }
-
-  } catch(err) {
-    res.status(500).send({ message: err.message });
   }
 }
+
+export default new userControler();

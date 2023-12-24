@@ -1,6 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-const checkAllowUser = (req, res, next) => {
+export const checkAllowUser = (req, res, next) => {
+  // who can update user info? 
+  // - user who owns this info
+  // - admin level user
+
   try {
     const { id } = req.params;
 
@@ -33,8 +37,6 @@ const checkAllowUser = (req, res, next) => {
 
     next();
   } catch(err) {
-    res.status(401).json({ message: 'user: failed check!' } );
+    res.status(500).json({ message: 'user: failed check!' } );
   }
 }
-
-export default checkAllowUser;
