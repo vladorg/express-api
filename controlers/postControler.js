@@ -9,7 +9,7 @@ class postControler {
       const { authorId } = req.query;
   
       if (authorId) {
-        posts = await Post.find({ "author.id": authorId});
+        posts = await Post.find({ "authorId": authorId });
       } else {
         posts = await Post.find();
       }

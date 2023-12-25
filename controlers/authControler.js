@@ -11,7 +11,7 @@ class authControler {
       const { login, password, name, role } = req.body;
       const isNotValid = regValidator(login, password);
       const defaultName = 'Unnamed user';
-      const defaultLevel = 2;
+      const defaultLevel = 3;
 
       const photoPath = 'http://' + req.headers.host + '/images/users/';  
       let photoName = 'user.jpg';

@@ -6,18 +6,11 @@ class userControler {
 
   async getAll(req, res) {
     try {
-      let posts;
-      const { authorId } = req.query;
-  
-      if (authorId) {
-        posts = await Post.find({ "author.id": authorId});
-      } else {
-        posts = await Post.find();
-      }
+      const users = await User.find({}, ['-password', '-__v']);
   
       res.json({
         message: 'ok',
-        posts
+        users
       });
     } catch(err) {
       res.status(500).send({ message: err.message });
@@ -65,6 +58,27 @@ class userControler {
         updatedUser
       })
   
+    } catch(err) {
+      res.status(500).send({ message: err.message });
+    }
+  }
+
+  async deleteUser(req, res) {
+    try {
+      const { id } = req.params;
+      const deletedUser = await User.findByIdAndDelete(id);
+
+      if (deletedUser) {
+        res.json({
+          message: 'ok',
+          deletedUser
+        })
+      } else {
+        res.json({
+          message: 'user is already deleted!'
+        })
+      }
+
     } catch(err) {
       res.status(500).send({ message: err.message });
     }
